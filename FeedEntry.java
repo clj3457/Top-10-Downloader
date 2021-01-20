@@ -1,11 +1,14 @@
 package com.craigjackson.top10downloader;
 
+import android.net.Uri;
+
 public class FeedEntry {
-    private String  name;
+    private String name;
     private String artist;
     private String releaseDate;
     private String summary;
-    private String imageURL;
+    private Uri imageURL;
+    private static final String TAG = "FeedEntry";
 
     public String getName() {
         return name;
@@ -39,19 +42,21 @@ public class FeedEntry {
         this.summary = summary;
     }
 
-    public String getImageURL() {
+    public Uri getImageURL() {
         return imageURL;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageURL(String imgURL) {
+        this.imageURL = Uri.parse(imgURL);
+//        Log.d(TAG, "setImageURL: " + imageURL);
     }
 
-    @Override
-    public String toString() {
-        return ('\n' + "name=" + name + '\n' +
-                ", artist=" + artist + '\n' +
-                ", releaseDate=" + releaseDate + '\n' +
-                ", imageURL=" + imageURL + '\n');
-    }
+// not used at this time
+//    @Override
+//    public String toString() {
+//        return ('\n' + "name=" + name + '\n' +
+//                ", artist=" + artist + '\n' +
+//                ", releaseDate=" + releaseDate + '\n' +
+//                ", imageURL=" + imageURL + '\n');
+//    }
 }
