@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listApps;
     private String feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml";
     private int feedLimit = 10;
+    private boolean isFeedLimit = true;
     private String feedCacheUrl = "INVALIDATED";
     public static final String STATE_URL = "feedUrl";
     public static final String STATE_LIMIT = "feedLimit";
@@ -58,29 +59,40 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        // check which item was selected and do appropriate stuff
         switch(id) {
+            // get top free apps
             case R.id.mnuFree:
                 feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml";
                 break;
+            // get top paid apps
             case R.id.mnuPaid:
                 feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=%d/xml";
                 break;
+            // get top songs
             case R.id.mnuSongs:
                 feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=%d/xml";
                 break;
+            // get top albums
             case R.id.mnuAlbums:
                 feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topalbums/limit=%d/xml";
                 break;
+            // set desired feed limit for lists
             case R.id.mnu10:
             case R.id.mnu25:
                 if(!item.isChecked()) {
                     item.setChecked(true);
                     feedLimit = 35 - feedLimit;
-                    Log.d(TAG, "onOptionsItemSelected: " + item.getTitle() + " setting feedLimit to " + feedLimit);
+//                    Log.d(TAG, "onOptionsItemSelected: " + item.getTitle() + " setting feedLimit to " + feedLimit);
                 }
-                else {
-                    Log.d(TAG, "onOptionsItemSelected: " + item.getTitle() + " feedLimit unchanged");
-                }
+//                else {
+//                    Log.d(TAG, "onOptionsItemSelected: " + item.getTitle() + " feedLimit unchanged");
+//                }
+                break;
+            // get list of top movies
+            case R.id.mnuTopMovies:
+                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topMovies/xml";
+                isFeedLimit = false;            // set flag stating there is not a feed limit
                 break;
             // refresh option has been selected, force an URL refresh
             case R.id.mnuRefresh:
@@ -89,7 +101,15 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }                       // end of switch statement
-        downloadUrl(String.format(feedUrl, feedLimit));
+        if(isFeedLimit) {
+            // get list with feed limit parameter
+            downloadUrl(String.format(feedUrl, feedLimit));
+        }
+        else {
+            // get list without feed limit parameter
+            downloadUrl(feedUrl);
+            isFeedLimit = true;                 // reset flag
+        }
         return true;
     }
 
@@ -102,15 +122,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void downloadUrl(String feedUrl) {
         if(!feedUrl.equalsIgnoreCase(feedCacheUrl)) {
-            Log.d(TAG, "downloadUrl: starting Asynctask");
+//            Log.d(TAG, "downloadUrl: starting Asynctask");
             DownloadData downloadData = new DownloadData();
             downloadData.execute(feedUrl);
             feedCacheUrl = feedUrl;
-            Log.d(TAG, "downloadUrl: done");
+//            Log.d(TAG, "downloadUrl: done");
         }
-        else {
-            Log.d(TAG, "downloadUrl: URL not changed.");
-        }
+//        else {
+//            Log.d(TAG, "downloadUrl: URL not changed.");
+//        }
     }
 
     private class DownloadData extends AsyncTask<String, Void, String> {
@@ -119,11 +139,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-//            Log.d(TAG, "onPostExecute: parameter is " + s);
             ParseApplications parseApplications = new ParseApplications();
             parseApplications.parse(s);
 
-            FeedAdapter feedAdapter = new FeedAdapter(MainActivity.this, R.layout.list_record,
+            FeedAdapter<FeedEntry> feedAdapter = new FeedAdapter<>(MainActivity.this, R.layout.list_record,
                     parseApplications.getApplications());
             listApps.setAdapter(feedAdapter);
         }

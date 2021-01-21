@@ -8,7 +8,7 @@ public class FeedEntry {
     private String releaseDate;
     private String summary;
     private Uri imageURL;
-    private static final String TAG = "FeedEntry";
+//    private static final String TAG = "FeedEntry";
 
     public String getName() {
         return name;
@@ -48,7 +48,6 @@ public class FeedEntry {
 
     public void setImageURL(String imgURL) {
         this.imageURL = Uri.parse(imgURL);
-//        Log.d(TAG, "setImageURL: " + imageURL);
     }
 
 // not used at this time

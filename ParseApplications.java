@@ -33,6 +33,7 @@ public class ParseApplications {
             while(eventType != XmlPullParser.END_DOCUMENT) {
                 String tagName = xpp.getName();
                 switch (eventType) {
+                    // got starting tag, setup new current record
                     case XmlPullParser.START_TAG:
 //                        Log.d(TAG, "parse: Starting tag for " + tagName);
                         if("entry".equalsIgnoreCase(tagName)) {
@@ -41,12 +42,13 @@ public class ParseApplications {
                         }
                         break;
 
+                    // got text, load the content into temp buffer
                     case XmlPullParser.TEXT:
                         textValue = xpp.getText();
                         break;
 
+                    // got end tag, determine which tag and add content to current record
                     case XmlPullParser.END_TAG:
-//                        Log.d(TAG, "parse: Ending tag for " + tagName);
                         if(inEntry) {
                             if("entry".equalsIgnoreCase(tagName)) {
                                 applications.add(currentRecord);

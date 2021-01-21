@@ -25,6 +25,9 @@
             android:id="@+id/mnu25"
             android:title="Top 25" />
     </group>
+    <item
+        android:id="@+id/mnuTopMovies"
+        android:title="Top Movies" />
     <item android:id="@+id/mnuRefresh"
         android:title="Refresh" />
 </menu>
